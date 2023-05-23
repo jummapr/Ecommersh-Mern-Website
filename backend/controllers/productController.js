@@ -1,5 +1,6 @@
 import { asyncError } from "../middlewares/error.js";
 import { Product } from "../models/Product.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 import ErrorHandler from "../utils/error.js";
 
 //create Products -- Admin Route
@@ -15,11 +16,18 @@ export const createProduct = asyncError(async (req, res, next) => {
 //! Get All Product --- User Route
 
 export const getAllProducts = asyncError(async (req, res) => {
-  const products = await Product.find();
+    const resultPage = 5;
+    const productCount = await Product.countDocuments();
+   const apiFeatures = new ApiFeatures(Product.find(), req.query)
+    .search().filter().pagination(resultPage)
+
+  const products = await apiFeatures.query;
+
 
   res.status(200).json({
     success: true,
     products,
+    productCount
   });
 });
 
