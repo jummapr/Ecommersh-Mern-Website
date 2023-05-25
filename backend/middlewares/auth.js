@@ -9,7 +9,6 @@ export const isAuthentication = asyncError(async (req, res, next) => {
   if (!token) {
     return next(new ErrorHandler("Please login first", 401));
   }
-
   const decodedData = jwt.verify(token, process.env.JWT_SECRET);
   const user = await User.findById(decodedData._id);
   req.user = user;
@@ -18,13 +17,9 @@ export const isAuthentication = asyncError(async (req, res, next) => {
 });
 
 export const isAdmin = asyncError(async (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return next(new ErrorHandler("Only admin can access this resource", 401));
+  }
 
-
-    if (req.user.role !== "admin") {
-      return next(new ErrorHandler("Only admin can access this resource", 401));
-    }
-  
-  
-  
-    next();
-  });
+  next();
+});
