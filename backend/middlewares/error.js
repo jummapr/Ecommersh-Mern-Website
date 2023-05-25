@@ -15,6 +15,19 @@ export const ErrorMiddleware = (err, req, res, next) => {
       (err.message = `category are required, please enter category`),
         (err.statusCode = 400);
     }
+
+    //! Wrong JWT Error
+    if (err.name === "JsonWebTokenError") {
+      (err.message = `Json web token is invalid, Try again`),
+        (err.statusCode = 400);
+    }
+
+    //! JWT Expires Error
+    if (err.name === "TokenExpiredError") {
+      (err.message = `Json web token is expired, Try again`),
+        (err.statusCode = 400);
+    }
+    
     res.status(err.statusCode).json({
       success: false,
       message: err.message,
